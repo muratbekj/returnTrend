@@ -2,6 +2,8 @@
 
 A Telegram bot that aggregates AI news from multiple sources so you can stay updated without visiting each website individually.
 
+**Try it now: [@returnTrendsBot](https://t.me/returnTrendsBot)**
+
 ## What it does
 
 This bot scrapes news from various AI-focused RSS feeds and websites, then provides you with:
