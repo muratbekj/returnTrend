@@ -20,7 +20,7 @@ class SimpleWebScraper:
                 feed = feedparser.parse(feed_url)
                 source_name = feed.feed.get('title', 'Unknown')
                 
-                for entry in feed.entries[:10]:  # Get max 10 from each feed
+                for entry in feed.entries[:3]:  # Get max 3 from each feed
                     title = entry.get('title', '')
                     summary = entry.get('summary', '')
                     link = entry.get('link', '')
