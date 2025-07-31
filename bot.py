@@ -6,23 +6,16 @@ from services.llm import SimpleLLMConnector
 
 from dotenv import load_dotenv
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-
-logger = logging.getLogger(__name__)
-
 load_dotenv()
 
 TELEGRAM_BOT_USERNAME = os.getenv('TELEGRAM_BOT_USERNAME')
 
 async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    logger.info(f"User {update.message.from_user.username} started the bot")
+    print(f"User {update.message.from_user.username} started the bot")
     await update.message.reply_text("Hello! I'm returntrends bot. How can I help you today?")
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    logger.info(f"User {update.message.from_user.username} requested help")
+    print(f"User {update.message.from_user.username} requested help")
     await update.message.reply_text("""
     /start - Start the bot
     /help - Show this help message
@@ -31,7 +24,7 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """)
 
 async def get_today_news_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    logger.info(f"User {update.message.from_user.username} requested today's news")
+    print(f"User {update.message.from_user.username} requested today's news")
     try:
         scraper = SimpleWebScraper()
         articles = scraper.get_all_articles()
@@ -66,7 +59,7 @@ async def get_today_news_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await update.message.reply_text("Sorry, there was an error fetching the news. Please try again later.")
 
 async def latest_summary_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    logger.info(f"User {update.message.from_user.username} requested latest summary")
+    print(f"User {update.message.from_user.username} requested latest summary")
     scraper = SimpleWebScraper()
     articles = scraper.get_all_articles()
     llm = SimpleLLMConnector()
@@ -107,7 +100,5 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
     else:
         response: str = handle_response(text)
-    
-    logger.info(f"Bot response: {response}")
     await update.message.reply_text(response)
 

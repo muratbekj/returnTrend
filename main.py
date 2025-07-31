@@ -28,7 +28,6 @@ def main():
     application.add_handler(CommandHandler("latest_summary", latest_summary_cmd))
     # Message handlers
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    print(f"Bot is running on {TELEGRAM_BOT_USERNAME}")
     application.run_polling(poll_interval=5)
 
 if __name__ == "__main__":
