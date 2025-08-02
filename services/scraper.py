@@ -6,9 +6,11 @@ from datetime import datetime
 class SimpleWebScraper:
     def __init__(self):
         self.rss_feeds = [
-            'https://magazine.sebastianraschka.com/feed',
+            'https://datamachina.substack.com/feed',
             'https://openai.com/news/rss.xml',
-            'https://www.artificialintelligence-news.com/feed/rss/',
+            'https://the-decoder.com/feed/',
+            'https://www.theverge.com/rss/index.xml',
+            'https://www.techspot.com/backend.xml',
         ]
 
     def scrape_rss_feeds(self):
@@ -20,7 +22,7 @@ class SimpleWebScraper:
                 feed = feedparser.parse(feed_url)
                 source_name = feed.feed.get('title', 'Unknown')
                 
-                for entry in feed.entries[:3]:  # Get max 3 from each feed
+                for entry in feed.entries[:4]:  # Get max 4 from each feed
                     title = entry.get('title', '')
                     summary = entry.get('summary', '')
                     link = entry.get('link', '')

@@ -28,10 +28,11 @@ This bot scrapes news from various AI-focused RSS feeds and websites, then provi
 ## News Sources
 
 The bot currently scrapes from:
-- Sebastian Raschka's AI Magazine
+- Data Machina
 - OpenAI News
-- Artificial Intelligence News
-- TechCrunch AI Section
+- The Verge
+- The Decoder
+- Techspot
 
 ## Setup
 
