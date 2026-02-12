@@ -6,11 +6,14 @@ from datetime import datetime
 class SimpleWebScraper:
     def __init__(self):
         self.rss_feeds = [
-            'https://datamachina.substack.com/feed',
-            'https://openai.com/news/rss.xml',
-            'https://the-decoder.com/feed/',
-            'https://www.theverge.com/rss/index.xml',
-            'https://www.techspot.com/backend.xml',
+            'https://venturebeat.com/category/ai/feed/',
+            'https://www.theguardian.com/technology/artificialintelligenceai/rss',
+            'https://davidstutz.de/category/blog/feed',
+            'https://huyenchip.com/feed',
+            'https://dev.to/feed',
+            'https://huggingface.co/blog/feed.xml',
+            'https://news.mit.edu/topic/mitmachine-learning-rss.xml',
+
         ]
 
     def scrape_rss_feeds(self):
@@ -22,7 +25,7 @@ class SimpleWebScraper:
                 feed = feedparser.parse(feed_url)
                 source_name = feed.feed.get('title', 'Unknown')
                 
-                for entry in feed.entries[:4]:  # Get max 4 from each feed
+                for entry in feed.entries[:5]:  # Get max 5 from each feed
                     title = entry.get('title', '')
                     summary = entry.get('summary', '')
                     link = entry.get('link', '')
@@ -33,7 +36,7 @@ class SimpleWebScraper:
                             pub_date = datetime(*entry.published_parsed[:6])
                         else:
                             pub_date = datetime.now()
-                    except:
+                    except (TypeError, ValueError):
                         pub_date = datetime.now()
                     
                     articles[title] = {
@@ -80,7 +83,7 @@ class SimpleWebScraper:
                         summary_elem = title_elem.find_parent().find(source['summary_selector'])
                         if summary_elem:
                             summary = summary_elem.get_text().strip()[:300]
-                    except:
+                    except AttributeError:
                         pass
                     
                     articles[title] = {
