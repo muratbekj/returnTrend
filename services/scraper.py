@@ -6,7 +6,9 @@ from datetime import datetime
 class SimpleWebScraper:
     def __init__(self):
         self.rss_feeds = [
+            'https://techcrunch.com/feed/',
             'https://venturebeat.com/category/ai/feed/',
+            'https://www.technologyreview.com/feed/',
             'https://www.theguardian.com/technology/artificialintelligenceai/rss',
             'https://davidstutz.de/category/blog/feed',
             'https://huyenchip.com/feed',

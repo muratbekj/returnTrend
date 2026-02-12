@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from datetime import datetime
 from telegram import Update
 from telegram.ext import ContextTypes
@@ -12,12 +13,37 @@ load_dotenv()
 
 TELEGRAM_BOT_USERNAME = os.getenv('TELEGRAM_BOT_USERNAME')
 TELEGRAM_MESSAGE_LIMIT = 4000
+NEWS_COMMAND_COOLDOWN_SECONDS = int(os.getenv("NEWS_COMMAND_COOLDOWN_SECONDS", "90"))
+SUMMARY_COMMAND_COOLDOWN_SECONDS = int(os.getenv("SUMMARY_COMMAND_COOLDOWN_SECONDS", "180"))
+_LAST_COMMAND_CALL = {}
 
 
 def _format_published_at(raw_published_at: str) -> str:
     """Format ISO date into a short readable UTC date."""
     if not raw_published_at:
         return ""
+
+
+def _get_cooldown_remaining(update: Update, command_name: str, cooldown_seconds: int) -> int:
+    """Return remaining cooldown seconds for this user+command (0 when allowed)."""
+    user = update.effective_user
+    if not user:
+        return 0
+
+    key = (user.id, command_name)
+    now = time.monotonic()
+    last_called = _LAST_COMMAND_CALL.get(key)
+    if last_called is None:
+        _LAST_COMMAND_CALL[key] = now
+        return 0
+
+    elapsed = now - last_called
+    remaining = cooldown_seconds - elapsed
+    if remaining > 0:
+        return int(remaining) + 1
+
+    _LAST_COMMAND_CALL[key] = now
+    return 0
     try:
         published_dt = datetime.fromisoformat(raw_published_at)
         return published_dt.strftime("%b %d, %Y")
@@ -96,6 +122,13 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_today_news_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"User {update.message.from_user.username} requested today's news")
+    remaining = _get_cooldown_remaining(update, "get_today_news", NEWS_COMMAND_COOLDOWN_SECONDS)
+    if remaining > 0:
+        await update.message.reply_text(
+            f"Please wait {remaining}s before using /get_today_news again."
+        )
+        return
+
     try:
         scraper = SimpleWebScraper()
         articles = scraper.get_all_articles()
@@ -146,6 +179,13 @@ async def get_today_news_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def latest_summary_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"User {update.message.from_user.username} requested latest summary")
+    remaining = _get_cooldown_remaining(update, "latest_summary", SUMMARY_COMMAND_COOLDOWN_SECONDS)
+    if remaining > 0:
+        await update.message.reply_text(
+            f"Please wait {remaining}s before using /latest_summary again."
+        )
+        return
+
     try:
         scraper = SimpleWebScraper()
         articles = scraper.get_all_articles()
